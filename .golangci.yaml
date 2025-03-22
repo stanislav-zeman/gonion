@@ -1,0 +1,38 @@
+run:
+  timeout: 3m
+  tests: false
+
+linters:
+  enable-all: true
+  disable:
+    # restrictive
+    - exhaustruct
+    - varnamelen
+    - nlreturn
+    - funlen
+    - nonamedreturns
+    - gochecknoglobals
+    - wsl
+    - nakedret
+    # deprecated
+    - tenv
+
+linters-settings:
+  depguard:
+    rules:
+      main:
+        list-mode: strict
+        files:
+           - $all
+        allow:
+          - $gostd
+  gocyclo:
+    min-complexity: 16
+
+output:
+  sort-results: true
+  formats:
+    - format: colored-line-number
+      path: stdout
+    - format: tab
+      path: golangci-lint.out
