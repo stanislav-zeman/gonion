@@ -1,38 +1,41 @@
+---
 run:
-  timeout: 3m
-  tests: false
+    timeout: 3m
+    tests: false
 
 linters:
-  enable-all: true
-  disable:
-    # restrictive
-    - exhaustruct
-    - varnamelen
-    - nlreturn
-    - funlen
-    - nonamedreturns
-    - gochecknoglobals
-    - wsl
-    - nakedret
-    # deprecated
-    - tenv
+    enable-all: true
+    disable:
+        # restrictive
+        - exhaustruct
+        - varnamelen
+        - nlreturn
+        - funlen
+        - nonamedreturns
+        - gochecknoglobals
+        - wsl
+        - nakedret
+        # deprecated
+        - tenv
 
 linters-settings:
-  depguard:
-    rules:
-      main:
-        list-mode: strict
-        files:
-           - $all
-        allow:
-          - $gostd
-  gocyclo:
-    min-complexity: 16
+    depguard:
+        rules:
+            main:
+                list-mode: strict
+                files:
+                    - $all
+                allow:
+                    - $gostd
+                    - github.com/stanislav-zeman/gonion
+                    - gopkg.in/yaml.v3
+    gocyclo:
+        min-complexity: 16
 
 output:
-  sort-results: true
-  formats:
-    - format: colored-line-number
-      path: stdout
-    - format: tab
-      path: golangci-lint.out
+    sort-results: true
+    formats:
+        - format: colored-line-number
+          path: stdout
+        - format: tab
+          path: golangci-lint.out
