@@ -1,0 +1,36 @@
+package services
+
+import (
+{{ if .Commands}}    "{{ .Import.Module }}/{{ .Import.Service }}/application/command" {{- end }}
+{{ if .Queries}}    "{{ .Import.Module }}/{{ .Import.Service }}/application/query" {{- end }}
+)
+
+type {{ .Name }}Service struct{
+{{ if .Logger }}    log {{ .Logger }} {{- end }}
+}
+
+func New{{ .Name }}Service(
+{{ if .Logger }}    log {{ .Logger }}, {{- end }}
+) *{{ .Name }}Service {
+    return &{{ .Name }}Service{
+        {{ if .Logger }} log: log, {{- end }}
+    }
+}
+
+{{- range .Queries }}
+
+func (s *{{ $.Name }}Service) {{ .Name }}(q query.{{ .Name }}) (r query.{{ .Name }}Result, err error) {
+    _ = q
+    panic("unimplemented")
+}
+
+{{- end }}
+
+{{- range .Commands }}
+
+func (s *{{ $.Name }}Service) {{ .Name }}(c command.{{ .Name }}) (r command.{{ .Name }}Result, err error) {
+    _ = c
+    panic("unimplemented")
+}
+
+{{- end }}

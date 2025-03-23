@@ -1,0 +1,18 @@
+package command
+
+
+{{ if not .Fields -}}
+
+type {{ .Name }}Command struct{}
+
+{{- else -}}
+
+type {{ .Name }}Command struct {
+    {{- range .Fields }}
+    {{ .Name }} {{ .Type }}
+    {{- end }}
+}
+
+{{- end }}
+
+type {{ .Name }}CommandResult struct{}

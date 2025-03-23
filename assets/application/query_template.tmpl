@@ -1,0 +1,17 @@
+package query
+
+{{ if not .Fields -}}
+
+type {{ .Name }}Query struct{}
+
+{{- else -}}
+
+type {{ .Name }}Query struct {
+    {{- range .Fields }}
+    {{ .Name }} {{ .Type }}
+    {{- end }}
+}
+
+{{- end }}
+
+type {{ .Name }}QueryResult struct{}
