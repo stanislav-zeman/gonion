@@ -61,6 +61,32 @@ services:
         infrastructure:
             client:
                 - name: AdsAPI
+    content:
+        logger: zap
+        config: true
+        api:
+            rest:
+                framework: echo
+                controller:
+                    - Program
+                endpoints:
+                    - name: Program
+                      controller: Program
+                      methods:
+                        - get
+                    - name: Programs
+                      controller: Program
+                      methods:
+                        - get
+        application:
+            service:
+                - name: Program
+                  queries:
+                    - name: Program
+                    - name: Programs
+        domain:
+            entity:
+                - name: Program
 misc:
     golangci: https://gist.githubusercontent.com/stanislav-zeman/1836bb720556ba6ed644bb3ac5ef1f6f/raw/9e5a9d3d423edf82b70ed43af85d3b1c797b79cd/.golangci.yaml
     gitignore: https://gist.githubusercontent.com/stanislav-zeman/d7300f47165bcccec7561b982deba049/raw/1f293b4c0da21f9dcf7ea42eae663aaef8834d9d/.gitignore
