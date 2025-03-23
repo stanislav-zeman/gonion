@@ -3,14 +3,15 @@ package services
 import (
     "github.com/stanislav-zeman/gonion/example/internal/management/application/command"
     "github.com/stanislav-zeman/gonion/example/internal/management/application/query"
+    "go.uber.org/zap"
 )
 
 type StreamService struct{
-    log zap
+    log *zap.Logger
 }
 
 func NewStreamService(
-    log zap,
+    log *zap.Logger,
 ) *StreamService {
     return &StreamService{
          log: log,

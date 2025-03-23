@@ -1,6 +1,7 @@
 package processor
 
 import (
+	"errors"
 	"fmt"
 	"log"
 
@@ -26,8 +27,17 @@ func New(config config.Config, templator templator.Templator, writer writer.Writ
 
 func (p *Processor) Run() error {
 	for serviceName, service := range p.config.Services {
+		var logger dto.Logger
+		switch service.Logger {
+		case "zap":
+			logger.Struct = "*zap.Logger"
+			logger.Package = "go.uber.org/zap"
+		default:
+			return errors.New("unknown logger")
+		}
+
 		for _, appService := range service.Application.Service {
-			appService.Logger = service.Logger
+			appService.Logger = logger
 			appService.Import = dto.Import{
 				Module:  p.config.Module,
 				Service: serviceName,

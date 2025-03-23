@@ -3,14 +3,15 @@ package services
 import (
 {{ if .Commands}}    "{{ .Import.Module }}/internal/{{ .Import.Service }}/application/command" {{- end }}
 {{ if .Queries}}    "{{ .Import.Module }}/internal/{{ .Import.Service }}/application/query" {{- end }}
+{{ if .Logger}}    "{{ .Logger.Package }}" {{- end }}
 )
 
 type {{ .Name }}Service struct{
-{{ if .Logger }}    log {{ .Logger }} {{- end }}
+{{ if .Logger }}    log {{ .Logger.Struct }} {{- end }}
 }
 
 func New{{ .Name }}Service(
-{{ if .Logger }}    log {{ .Logger }}, {{- end }}
+{{ if .Logger }}    log {{ .Logger.Struct }}, {{- end }}
 ) *{{ .Name }}Service {
     return &{{ .Name }}Service{
         {{ if .Logger }} log: log, {{- end }}
