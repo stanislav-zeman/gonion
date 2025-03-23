@@ -1,0 +1,66 @@
+---
+version: 1
+module: github.com/stanislav-zeman/gonion/example
+services:
+    management:
+        logger: zap
+        config: true
+        api:
+            rest:
+                framework: echo
+                controller:
+                    - Configuration
+                    - Stream
+                endpoints:
+                    - name: Stream
+                      controller: Stream
+                      methods:
+                        - get
+                        - post
+                    - name: Configuration
+                      controller: Configuration
+                      methods:
+                        - get
+                        - post
+                        - patch
+        application:
+            service:
+                - name: Stream
+                  queries:
+                    - name: Stream
+                      fields:
+                        - name: ID
+                          type: string
+                    - name: Configuration
+                  commands:
+                    - name: StreamCreate
+                      fields:
+                        - name: ID
+                          type: string
+                        - name: Name
+                          type: string
+                    - name: ConfigurationCreate
+                    - name: ConfigurationUpdate
+        domain:
+            entity:
+                - name: Stream
+                  fields:
+                    - name: ID
+                      type: string
+                    - name: Name
+                      type: string
+                    - name: State
+                      type: value_object.State
+            value_object:
+                - name: State
+            repository:
+                - name: Stream
+                  type: Redis
+                - name: Configuration
+                  type: Postgres
+        infrastructure:
+            client:
+                - name: AdsAPI
+misc:
+    golangci: https://gist.githubusercontent.com/stanislav-zeman/1836bb720556ba6ed644bb3ac5ef1f6f/raw/9e5a9d3d423edf82b70ed43af85d3b1c797b79cd/.golangci.yaml
+    gitignore: https://gist.githubusercontent.com/stanislav-zeman/d7300f47165bcccec7561b982deba049/raw/1f293b4c0da21f9dcf7ea42eae663aaef8834d9d/.gitignore
