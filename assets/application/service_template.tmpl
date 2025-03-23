@@ -1,8 +1,8 @@
 package services
 
 import (
-{{ if .Commands}}    "{{ .Import.Module }}/{{ .Import.Service }}/application/command" {{- end }}
-{{ if .Queries}}    "{{ .Import.Module }}/{{ .Import.Service }}/application/query" {{- end }}
+{{ if .Commands}}    "{{ .Import.Module }}/internal/{{ .Import.Service }}/application/command" {{- end }}
+{{ if .Queries}}    "{{ .Import.Module }}/internal/{{ .Import.Service }}/application/query" {{- end }}
 )
 
 type {{ .Name }}Service struct{

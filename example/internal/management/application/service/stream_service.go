@@ -1,8 +1,8 @@
 package services
 
 import (
-    "github.com/stanislav-zeman/gonion/example/management/application/command"
-    "github.com/stanislav-zeman/gonion/example/management/application/query"
+    "github.com/stanislav-zeman/gonion/example/internal/management/application/command"
+    "github.com/stanislav-zeman/gonion/example/internal/management/application/query"
 )
 
 type StreamService struct{
