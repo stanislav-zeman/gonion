@@ -18,27 +18,27 @@ func NewStreamService(
     }
 }
 
-func (s *StreamService) Stream(q query.Stream) (r query.StreamResult, err error) {
+func (s *StreamService) Stream(q query.StreamQuery) (r query.StreamQueryResult, err error) {
     _ = q
     panic("unimplemented")
 }
 
-func (s *StreamService) Configuration(q query.Configuration) (r query.ConfigurationResult, err error) {
+func (s *StreamService) Configuration(q query.ConfigurationQuery) (r query.ConfigurationQueryResult, err error) {
     _ = q
     panic("unimplemented")
 }
 
-func (s *StreamService) StreamCreate(c command.StreamCreate) (r command.StreamCreateResult, err error) {
+func (s *StreamService) StreamCreate(c command.StreamCreateCommand) (r command.StreamCreateCommandResult, err error) {
     _ = c
     panic("unimplemented")
 }
 
-func (s *StreamService) ConfigurationCreate(c command.ConfigurationCreate) (r command.ConfigurationCreateResult, err error) {
+func (s *StreamService) ConfigurationCreate(c command.ConfigurationCreateCommand) (r command.ConfigurationCreateCommandResult, err error) {
     _ = c
     panic("unimplemented")
 }
 
-func (s *StreamService) ConfigurationUpdate(c command.ConfigurationUpdate) (r command.ConfigurationUpdateResult, err error) {
+func (s *StreamService) ConfigurationUpdate(c command.ConfigurationUpdateCommand) (r command.ConfigurationUpdateCommandResult, err error) {
     _ = c
     panic("unimplemented")
 }
