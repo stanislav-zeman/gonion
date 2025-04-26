@@ -21,31 +21,31 @@ type Templator struct {
 }
 
 func New(assetsDirector string) (t Templator, err error) {
-	fp := filepath.Join(assetsDirector, layers.DomainLayer, "entity_template.tmpl")
+	fp := filepath.Join(assetsDirector, layers.DomainLayer, "entity.tmpl")
 	entity, err := template.ParseFiles(fp)
 	if err != nil {
 		return
 	}
 
-	fp = filepath.Join(assetsDirector, layers.DomainLayer, "service_template.tmpl")
+	fp = filepath.Join(assetsDirector, layers.DomainLayer, "service.tmpl")
 	domainService, err := template.ParseFiles(fp)
 	if err != nil {
 		return
 	}
 
-	fp = filepath.Join(assetsDirector, layers.ApplicationLayer, "command_template.tmpl")
+	fp = filepath.Join(assetsDirector, layers.ApplicationLayer, "command.tmpl")
 	command, err := template.ParseFiles(fp)
 	if err != nil {
 		return
 	}
 
-	fp = filepath.Join(assetsDirector, layers.ApplicationLayer, "query_template.tmpl")
+	fp = filepath.Join(assetsDirector, layers.ApplicationLayer, "query.tmpl")
 	query, err := template.ParseFiles(fp)
 	if err != nil {
 		return
 	}
 
-	fp = filepath.Join(assetsDirector, layers.ApplicationLayer, "service_template.tmpl")
+	fp = filepath.Join(assetsDirector, layers.ApplicationLayer, "service.tmpl")
 	appService, err := template.ParseFiles(fp)
 	if err != nil {
 		return
