@@ -52,8 +52,8 @@ services:
                     - name: Name
                       type: string
                     - name: State
-                      type: value_object.State
-            value_object:
+                      type: value.State
+            value:
                 - name: State
             repository:
                 - name: Stream
