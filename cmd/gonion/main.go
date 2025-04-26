@@ -14,8 +14,8 @@ import (
 )
 
 var (
-	configPath      = flag.String("config", "config/example.yaml", "project structure configuration")
-	outputDirectory = flag.String("out", "example", "project structure output directory")
+	configPath      = flag.String("config", "gonion.yaml", "project structure configuration")
+	outputDirectory = flag.String("out", ".", "project structure output directory")
 )
 
 func main() {
