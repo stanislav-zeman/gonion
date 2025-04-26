@@ -2,7 +2,10 @@ package services
 
 import (
 {{ if .Logger}}    "{{ .Logger.Package }}" {{- end }}
+    "{{ .Import.Module }}/internal/{{ .Import.Service }}/domain/interface"
 )
+
+var _ interfaces.{{ .Name }}Service = &{{ .Name }}Service{}
 
 type {{ .Name }}Service struct{
 {{ if .Logger }}    log {{ .Logger.Struct }} {{- end }}
