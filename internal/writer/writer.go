@@ -32,22 +32,16 @@ func (w *Writer) WriteDomainValue(service, name string, data []byte) error {
 	return w.writeFile(service, layers.DomainLayer, "value", name, data)
 }
 
+func (w *Writer) WriteDomainInterface(service, name string, data []byte) error {
+	return w.writeFile(service, layers.DomainLayer, "interface", name, data)
+}
+
 func (w *Writer) WriteDomainService(service, name string, data []byte) error {
 	directory := "service"
 	return w.writeFile(service, layers.DomainLayer, directory, name+"_"+directory, data)
 }
 
 // ----------------------------------------------------------------------------
-
-func (w *Writer) WriteApplicationInterface(service, name string, data []byte) error {
-	directory := "interface"
-	return w.writeFile(service, layers.ApplicationLayer, directory, name, data)
-}
-
-func (w *Writer) WriteApplicationService(service, name string, data []byte) error {
-	directory := "service"
-	return w.writeFile(service, layers.ApplicationLayer, directory, name+"_"+directory, data)
-}
 
 func (w *Writer) WriteApplicationCommand(service, name string, data []byte) error {
 	directory := "command"
@@ -56,6 +50,15 @@ func (w *Writer) WriteApplicationCommand(service, name string, data []byte) erro
 
 func (w *Writer) WriteApplicationQuery(service, name string, data []byte) error {
 	directory := "query"
+	return w.writeFile(service, layers.ApplicationLayer, directory, name+"_"+directory, data)
+}
+
+func (w *Writer) WriteApplicationInterface(service, name string, data []byte) error {
+	return w.writeFile(service, layers.ApplicationLayer, "interface", name, data)
+}
+
+func (w *Writer) WriteApplicationService(service, name string, data []byte) error {
+	directory := "service"
 	return w.writeFile(service, layers.ApplicationLayer, directory, name+"_"+directory, data)
 }
 

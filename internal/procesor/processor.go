@@ -90,6 +90,18 @@ func (p *Processor) processDomainServices(serviceName string, logger dto.Logger,
 		if err != nil {
 			return fmt.Errorf("failed writing service: %w", err)
 		}
+
+		log.Printf("Generating domain service interface: %v\n", domainService)
+
+		data, err = p.templator.TemplateDomainInterface(domainService)
+		if err != nil {
+			return fmt.Errorf("failed templating service interface: %w", err)
+		}
+
+		err = p.writer.WriteDomainInterface(serviceName, domainService.Name+"_service", data)
+		if err != nil {
+			return fmt.Errorf("failed writing service interface: %w", err)
+		}
 	}
 
 	return nil
