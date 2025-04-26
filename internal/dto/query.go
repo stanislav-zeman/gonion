@@ -1,6 +1,6 @@
 package dto
 
 type Query struct {
-	Name   string
-	Fields []Field
+	Name   string  `json:"name,omitempty"`
+	Fields []Field `json:"fields,omitzero"`
 }

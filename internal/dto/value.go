@@ -1,5 +1,5 @@
 package dto
 
 type Value struct {
-	Name string
+	Name string `json:"name,omitempty"`
 }
