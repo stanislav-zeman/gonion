@@ -1,0 +1,17 @@
+package interfaces
+
+import (
+{{ if .Commands}}    "{{ .Import.Module }}/internal/{{ .Import.Service }}/application/command" {{- end }}
+{{ if .Queries}}    "{{ .Import.Module }}/internal/{{ .Import.Service }}/application/query" {{- end }}
+)
+
+type {{ .Name }}Service interface{
+
+{{- range .Queries }}
+    {{ .Name }}(q query.{{ .Name }}Query) (r query.{{ .Name }}QueryResult, err error)
+{{- end }}
+
+{{- range .Commands }}
+    {{ .Name }}(c command.{{ .Name }}Command) (r command.{{ .Name }}CommandResult, err error)
+{{- end }}
+}

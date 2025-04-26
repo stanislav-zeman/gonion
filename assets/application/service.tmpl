@@ -4,7 +4,10 @@ import (
 {{ if .Commands}}    "{{ .Import.Module }}/internal/{{ .Import.Service }}/application/command" {{- end }}
 {{ if .Queries}}    "{{ .Import.Module }}/internal/{{ .Import.Service }}/application/query" {{- end }}
 {{ if .Logger}}    "{{ .Logger.Package }}" {{- end }}
+    "{{ .Import.Module }}/internal/{{ .Import.Service }}/application/interface"
 )
+
+var _ interfaces.{{ .Name }}Service = &{{ .Name }}Service{}
 
 type {{ .Name }}Service struct{
 {{ if .Logger }}    log {{ .Logger.Struct }} {{- end }}
