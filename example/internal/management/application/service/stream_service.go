@@ -4,7 +4,10 @@ import (
     "github.com/stanislav-zeman/gonion/example/internal/management/application/command"
     "github.com/stanislav-zeman/gonion/example/internal/management/application/query"
     "go.uber.org/zap"
+    "github.com/stanislav-zeman/gonion/example/internal/management/application/interface"
 )
+
+var _ interfaces.StreamService = &StreamService{}
 
 type StreamService struct{
     log *zap.Logger
