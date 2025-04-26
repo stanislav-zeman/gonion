@@ -22,6 +22,8 @@ func NewWriter(directory string) Writer {
 	}
 }
 
+// ----------------------------------------------------------------------------
+
 func (w *Writer) WriteDomainEntity(service, name string, data []byte) error {
 	return w.writeFile(service, layers.DomainLayer, "entity", name, data)
 }
@@ -33,6 +35,13 @@ func (w *Writer) WriteDomainValue(service, name string, data []byte) error {
 func (w *Writer) WriteDomainService(service, name string, data []byte) error {
 	directory := "service"
 	return w.writeFile(service, layers.DomainLayer, directory, name+"_"+directory, data)
+}
+
+// ----------------------------------------------------------------------------
+
+func (w *Writer) WriteApplicationInterface(service, name string, data []byte) error {
+	directory := "interface"
+	return w.writeFile(service, layers.ApplicationLayer, directory, name, data)
 }
 
 func (w *Writer) WriteApplicationService(service, name string, data []byte) error {
@@ -49,6 +58,8 @@ func (w *Writer) WriteApplicationQuery(service, name string, data []byte) error 
 	directory := "query"
 	return w.writeFile(service, layers.ApplicationLayer, directory, name+"_"+directory, data)
 }
+
+// ----------------------------------------------------------------------------
 
 func (w *Writer) writeFile(service, layer, directory, name string, data []byte) error {
 	fp := filepath.Join(

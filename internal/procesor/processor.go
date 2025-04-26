@@ -28,16 +28,12 @@ func New(config config.Config, templator templator.Templator, writer writer.Writ
 
 func (p *Processor) Run() error {
 	for serviceName, service := range p.config.Services {
-		var logger dto.Logger
-		switch service.Logger {
-		case "zap":
-			logger.Struct = "*zap.Logger"
-			logger.Package = "go.uber.org/zap"
-		default:
-			return errors.New("unknown logger")
+		logger, err := p.parseLogger(service.Logger)
+		if err != nil {
+			return fmt.Errorf("failed parsing logger: %w", err)
 		}
 
-		err := p.processEntities(serviceName, service.Domain.Entity)
+		err = p.processEntities(serviceName, service.Domain.Entity)
 		if err != nil {
 			return fmt.Errorf("failed processing entities: %w", err)
 		}
@@ -47,54 +43,98 @@ func (p *Processor) Run() error {
 			return fmt.Errorf("failed processing values: %w", err)
 		}
 
-		for _, domainService := range service.Domain.Service {
-			domainService.Logger = logger
-			domainService.Import = dto.Import{
-				Module:  p.config.Module,
-				Service: serviceName,
-			}
-
-			log.Printf("Generating domain service: %v\n", domainService)
-
-			data, err := p.templator.TemplateDomainService(domainService)
-			if err != nil {
-				return fmt.Errorf("failed templating service: %w", err)
-			}
-
-			err = p.writer.WriteDomainService(serviceName, domainService.Name, data)
-			if err != nil {
-				return fmt.Errorf("failed writing service: %w", err)
-			}
+		err = p.processDomainServices(serviceName, logger, service.Domain.Service)
+		if err != nil {
+			return fmt.Errorf("failed processing domain services: %w", err)
 		}
 
-		for _, appService := range service.Application.Service {
-			appService.Logger = logger
-			appService.Import = dto.Import{
-				Module:  p.config.Module,
-				Service: serviceName,
-			}
+		err = p.processApplicationServices(serviceName, logger, service.Application.Service)
+		if err != nil {
+			return fmt.Errorf("failed processing application services: %w", err)
+		}
+	}
 
-			log.Printf("Generating application service: %v\n", appService)
+	return nil
+}
 
-			data, err := p.templator.TemplateApplicationService(appService)
-			if err != nil {
-				return fmt.Errorf("failed templating service: %w", err)
-			}
+func (p *Processor) parseLogger(loggerName string) (logger dto.Logger, err error) {
+	switch loggerName {
+	case "zap":
+		logger = dto.Logger{
+			Struct:  "*zap.Logger",
+			Package: "go.uber.org/zap",
+		}
+		return
+	default:
+		err = errors.New("unknown logger")
+		return
+	}
+}
 
-			err = p.writer.WriteApplicationService(serviceName, appService.Name, data)
-			if err != nil {
-				return fmt.Errorf("failed writing service: %w", err)
-			}
+func (p *Processor) processDomainServices(serviceName string, logger dto.Logger, services []dto.Service) error {
+	for _, domainService := range services {
+		domainService.Logger = logger
+		domainService.Import = dto.Import{
+			Module:  p.config.Module,
+			Service: serviceName,
+		}
 
-			err = p.processQueries(serviceName, appService.Queries)
-			if err != nil {
-				return fmt.Errorf("failed processing queries: %w", err)
-			}
+		log.Printf("Generating domain service: %v\n", domainService)
 
-			err = p.processCommands(serviceName, appService.Commands)
-			if err != nil {
-				return fmt.Errorf("failed processing commands: %w", err)
-			}
+		data, err := p.templator.TemplateDomainService(domainService)
+		if err != nil {
+			return fmt.Errorf("failed templating service: %w", err)
+		}
+
+		err = p.writer.WriteDomainService(serviceName, domainService.Name, data)
+		if err != nil {
+			return fmt.Errorf("failed writing service: %w", err)
+		}
+	}
+
+	return nil
+}
+
+func (p *Processor) processApplicationServices(serviceName string, logger dto.Logger, services []dto.Service) error {
+	for _, appService := range services {
+		appService.Logger = logger
+		appService.Import = dto.Import{
+			Module:  p.config.Module,
+			Service: serviceName,
+		}
+
+		log.Printf("Generating application service: %v\n", appService)
+
+		data, err := p.templator.TemplateApplicationService(appService)
+		if err != nil {
+			return fmt.Errorf("failed templating service: %w", err)
+		}
+
+		err = p.writer.WriteApplicationService(serviceName, appService.Name, data)
+		if err != nil {
+			return fmt.Errorf("failed writing service: %w", err)
+		}
+
+		log.Printf("Generating application service interface: %v\n", appService)
+
+		data, err = p.templator.TemplateApplicationInterface(appService)
+		if err != nil {
+			return fmt.Errorf("failed templating service interface: %w", err)
+		}
+
+		err = p.writer.WriteApplicationInterface(serviceName, appService.Name+"_service", data)
+		if err != nil {
+			return fmt.Errorf("failed writing service interface: %w", err)
+		}
+
+		err = p.processQueries(serviceName, appService.Queries)
+		if err != nil {
+			return fmt.Errorf("failed processing queries: %w", err)
+		}
+
+		err = p.processCommands(serviceName, appService.Commands)
+		if err != nil {
+			return fmt.Errorf("failed processing commands: %w", err)
 		}
 	}
 

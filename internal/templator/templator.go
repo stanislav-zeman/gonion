@@ -16,9 +16,10 @@ type Templator struct {
 	domainService *template.Template
 
 	// Application templates.
-	command    *template.Template
-	query      *template.Template
-	appService *template.Template
+	command      *template.Template
+	query        *template.Template
+	appInterface *template.Template
+	appService   *template.Template
 }
 
 func New(assetsDirector string) (t Templator, err error) {
@@ -52,6 +53,12 @@ func New(assetsDirector string) (t Templator, err error) {
 		return
 	}
 
+	fp = filepath.Join(assetsDirector, layers.ApplicationLayer, "interface.tmpl")
+	appInterface, err := template.ParseFiles(fp)
+	if err != nil {
+		return
+	}
+
 	fp = filepath.Join(assetsDirector, layers.ApplicationLayer, "service.tmpl")
 	appService, err := template.ParseFiles(fp)
 	if err != nil {
@@ -63,13 +70,16 @@ func New(assetsDirector string) (t Templator, err error) {
 		value:         value,
 		domainService: domainService,
 
-		command:    command,
-		query:      query,
-		appService: appService,
+		command:      command,
+		query:        query,
+		appInterface: appInterface,
+		appService:   appService,
 	}
 
 	return
 }
+
+// ----------------------------------------------------------------------------
 
 func (t *Templator) TemplateEntity(e dto.Entity) (data []byte, err error) {
 	return templateObject(t.entity, e)
@@ -83,6 +93,8 @@ func (t *Templator) TemplateDomainService(e dto.Service) (data []byte, err error
 	return templateObject(t.domainService, e)
 }
 
+// ----------------------------------------------------------------------------
+
 func (t *Templator) TemplateCommand(c dto.Command) (data []byte, err error) {
 	return templateObject(t.command, c)
 }
@@ -91,9 +103,15 @@ func (t *Templator) TemplateQuery(q dto.Query) (data []byte, err error) {
 	return templateObject(t.query, q)
 }
 
+func (t *Templator) TemplateApplicationInterface(s dto.Service) (data []byte, err error) {
+	return templateObject(t.appInterface, s)
+}
+
 func (t *Templator) TemplateApplicationService(s dto.Service) (data []byte, err error) {
 	return templateObject(t.appService, s)
 }
+
+// ----------------------------------------------------------------------------
 
 func templateObject(t *template.Template, object any) (data []byte, err error) {
 	b := bytes.NewBuffer(make([]byte, 0))
