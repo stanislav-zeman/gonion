@@ -6,6 +6,15 @@ type {{ .Name }} struct{}
 
 {{- else -}}
 
+
+{{ if .HasValues -}}
+
+import (
+    "{{ .Import.Module }}/internal/{{ .Import.Service }}/domain/value"
+)
+
+{{- end }}
+
 type {{ .Name }} struct {
     {{- range .Fields }}
     {{ .Name }} {{ .Type }}
