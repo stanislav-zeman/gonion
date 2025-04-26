@@ -42,6 +42,8 @@ services:
                     - name: ConfigurationCreate
                     - name: ConfigurationUpdate
         domain:
+            service:
+                - name: Stream
             entity:
                 - name: Stream
                   fields:
