@@ -26,6 +26,10 @@ func (w *Writer) WriteDomainEntity(service, name string, data []byte) error {
 	return w.writeFile(service, layers.DomainLayer, "entity", name, data)
 }
 
+func (w *Writer) WriteDomainValue(service, name string, data []byte) error {
+	return w.writeFile(service, layers.DomainLayer, "value", name, data)
+}
+
 func (w *Writer) WriteDomainService(service, name string, data []byte) error {
 	directory := "service"
 	return w.writeFile(service, layers.DomainLayer, directory, name+"_"+directory, data)

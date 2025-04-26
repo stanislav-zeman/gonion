@@ -12,6 +12,7 @@ import (
 type Templator struct {
 	// Domain templates.
 	entity        *template.Template
+	value         *template.Template
 	domainService *template.Template
 
 	// Application templates.
@@ -23,6 +24,12 @@ type Templator struct {
 func New(assetsDirector string) (t Templator, err error) {
 	fp := filepath.Join(assetsDirector, layers.DomainLayer, "entity.tmpl")
 	entity, err := template.ParseFiles(fp)
+	if err != nil {
+		return
+	}
+
+	fp = filepath.Join(assetsDirector, layers.DomainLayer, "value.tmpl")
+	value, err := template.ParseFiles(fp)
 	if err != nil {
 		return
 	}
@@ -53,6 +60,7 @@ func New(assetsDirector string) (t Templator, err error) {
 
 	t = Templator{
 		entity:        entity,
+		value:         value,
 		domainService: domainService,
 
 		command:    command,
@@ -65,6 +73,10 @@ func New(assetsDirector string) (t Templator, err error) {
 
 func (t *Templator) TemplateEntity(e dto.Entity) (data []byte, err error) {
 	return templateObject(t.entity, e)
+}
+
+func (t *Templator) TemplateValue(e dto.Value) (data []byte, err error) {
+	return templateObject(t.value, e)
 }
 
 func (t *Templator) TemplateDomainService(e dto.Service) (data []byte, err error) {

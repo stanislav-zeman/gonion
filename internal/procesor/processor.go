@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/stanislav-zeman/gonion/internal/config"
 	"github.com/stanislav-zeman/gonion/internal/dto"
@@ -39,6 +40,11 @@ func (p *Processor) Run() error {
 		err := p.processEntities(serviceName, service.Domain.Entity)
 		if err != nil {
 			return fmt.Errorf("failed processing entities: %w", err)
+		}
+
+		err = p.processValues(serviceName, service.Domain.Value)
+		if err != nil {
+			return fmt.Errorf("failed processing values: %w", err)
 		}
 
 		for _, domainService := range service.Domain.Service {
@@ -97,6 +103,18 @@ func (p *Processor) Run() error {
 
 func (p *Processor) processEntities(serviceName string, entities []dto.Entity) error {
 	for _, entity := range entities {
+		for _, field := range entity.Fields {
+			if strings.Contains(field.Type, "value") {
+				entity.HasValues = true
+				entity.Import = dto.Import{
+					Module:  p.config.Module,
+					Service: serviceName,
+				}
+
+				break
+			}
+		}
+
 		log.Printf("entity: %v\n", entity)
 
 		data, err := p.templator.TemplateEntity(entity)
@@ -107,6 +125,24 @@ func (p *Processor) processEntities(serviceName string, entities []dto.Entity) e
 		err = p.writer.WriteDomainEntity(serviceName, entity.Name, data)
 		if err != nil {
 			return fmt.Errorf("failed writing entity: %w", err)
+		}
+	}
+
+	return nil
+}
+
+func (p *Processor) processValues(serviceName string, values []dto.Value) error {
+	for _, value := range values {
+		log.Printf("value: %v\n", value)
+
+		data, err := p.templator.TemplateValue(value)
+		if err != nil {
+			return fmt.Errorf("failed templating entity: %w", err)
+		}
+
+		err = p.writer.WriteDomainValue(serviceName, value.Name, data)
+		if err != nil {
+			return fmt.Errorf("failed writing value: %w", err)
 		}
 	}
 
