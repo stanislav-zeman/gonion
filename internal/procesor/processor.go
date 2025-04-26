@@ -36,6 +36,31 @@ func (p *Processor) Run() error {
 			return errors.New("unknown logger")
 		}
 
+		err := p.processEntities(serviceName, service.Domain.Entity)
+		if err != nil {
+			return fmt.Errorf("failed processing entities: %w", err)
+		}
+
+		for _, domainService := range service.Domain.Service {
+			domainService.Logger = logger
+			domainService.Import = dto.Import{
+				Module:  p.config.Module,
+				Service: serviceName,
+			}
+
+			log.Printf("Generating domain service: %v\n", domainService)
+
+			data, err := p.templator.TemplateDomainService(domainService)
+			if err != nil {
+				return fmt.Errorf("failed templating service: %w", err)
+			}
+
+			err = p.writer.WriteDomainService(serviceName, domainService.Name, data)
+			if err != nil {
+				return fmt.Errorf("failed writing service: %w", err)
+			}
+		}
+
 		for _, appService := range service.Application.Service {
 			appService.Logger = logger
 			appService.Import = dto.Import{
@@ -43,9 +68,9 @@ func (p *Processor) Run() error {
 				Service: serviceName,
 			}
 
-			log.Printf("service: %v\n", appService)
+			log.Printf("Generating application service: %v\n", appService)
 
-			data, err := p.templator.TemplateService(appService)
+			data, err := p.templator.TemplateApplicationService(appService)
 			if err != nil {
 				return fmt.Errorf("failed templating service: %w", err)
 			}
@@ -64,6 +89,24 @@ func (p *Processor) Run() error {
 			if err != nil {
 				return fmt.Errorf("failed processing commands: %w", err)
 			}
+		}
+	}
+
+	return nil
+}
+
+func (p *Processor) processEntities(serviceName string, entities []dto.Entity) error {
+	for _, entity := range entities {
+		log.Printf("entity: %v\n", entity)
+
+		data, err := p.templator.TemplateEntity(entity)
+		if err != nil {
+			return fmt.Errorf("failed templating entity: %w", err)
+		}
+
+		err = p.writer.WriteDomainEntity(serviceName, entity.Name, data)
+		if err != nil {
+			return fmt.Errorf("failed writing entity: %w", err)
 		}
 	}
 

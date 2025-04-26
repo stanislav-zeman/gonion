@@ -29,9 +29,10 @@ type ApplicationServiceConfig struct {
 }
 
 type DomainConfig struct {
-	Entity     []StructConfig     `yaml:"entity,omitempty"`
+	Entity     []dto.Entity       `yaml:"entity,omitempty"`
 	Value      []StructConfig     `yaml:"value,omitempty"`
 	Repository []RepositoryConfig `yaml:"repository,omitempty"`
+	Service    []dto.Service      `yaml:"service,omitempty"`
 }
 
 type StructConfig struct {

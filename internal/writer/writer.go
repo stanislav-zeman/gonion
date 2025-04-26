@@ -10,7 +10,7 @@ import (
 	"github.com/stanislav-zeman/gonion/internal/layers"
 )
 
-const defaultFilePermissions = 0o600
+const defaultFilePermissions = 0o755
 
 type Writer struct {
 	directory string
@@ -20,6 +20,15 @@ func NewWriter(directory string) Writer {
 	return Writer{
 		directory: directory,
 	}
+}
+
+func (w *Writer) WriteDomainEntity(service, name string, data []byte) error {
+	return w.writeFile(service, layers.DomainLayer, "entity", name, data)
+}
+
+func (w *Writer) WriteDomainService(service, name string, data []byte) error {
+	directory := "service"
+	return w.writeFile(service, layers.DomainLayer, directory, name+"_"+directory, data)
 }
 
 func (w *Writer) WriteApplicationService(service, name string, data []byte) error {
@@ -37,10 +46,6 @@ func (w *Writer) WriteApplicationQuery(service, name string, data []byte) error 
 	return w.writeFile(service, layers.ApplicationLayer, directory, name+"_"+directory, data)
 }
 
-func (w *Writer) WriteDomainEntity(service, name string, data []byte) error {
-	return w.writeFile(service, layers.DomainLayer, "entity", name, data)
-}
-
 func (w *Writer) writeFile(service, layer, directory, name string, data []byte) error {
 	fp := filepath.Join(
 		w.directory,
@@ -53,9 +58,14 @@ func (w *Writer) writeFile(service, layer, directory, name string, data []byte) 
 
 	fp = convertor.ToSnakeCase(fp)
 
+	err := os.MkdirAll(filepath.Dir(fp), defaultFilePermissions)
+	if err != nil {
+		return fmt.Errorf("failed creating directories: %w", err)
+	}
+
 	log.Printf("writing to path: %v", fp)
 
-	err := os.WriteFile(fp, data, defaultFilePermissions)
+	err = os.WriteFile(fp, data, defaultFilePermissions)
 	if err != nil {
 		return fmt.Errorf("failed writing file: %w", err)
 	}
