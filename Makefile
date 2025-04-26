@@ -1,3 +1,6 @@
+gen: build
+	go generate ./...
+
 build:
 	go build -o bin ./...
 
