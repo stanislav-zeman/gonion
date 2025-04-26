@@ -1,0 +1,17 @@
+package services
+
+import (
+{{ if .Logger}}    "{{ .Logger.Package }}" {{- end }}
+)
+
+type {{ .Name }}Service struct{
+{{ if .Logger }}    log {{ .Logger.Struct }} {{- end }}
+}
+
+func New{{ .Name }}Service(
+{{ if .Logger }}    log {{ .Logger.Struct }}, {{- end }}
+) *{{ .Name }}Service {
+    return &{{ .Name }}Service{
+        {{ if .Logger }} log: log, {{- end }}
+    }
+}

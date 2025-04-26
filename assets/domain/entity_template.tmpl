@@ -1,0 +1,15 @@
+package entity
+
+{{ if not .Fields -}}
+
+type {{ .Name }} struct{}
+
+{{- else -}}
+
+type {{ .Name }} struct {
+    {{- range .Fields }}
+    {{ .Name }} {{ .Type }}
+    {{- end }}
+}
+
+{{- end }}
