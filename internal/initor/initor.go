@@ -87,6 +87,11 @@ func (i *Initor) initGoModule() error {
 		return fmt.Errorf("failed to stat go module: %w", err)
 	}
 
+	err = os.MkdirAll(i.directory, defaultFilePermissions)
+	if err != nil {
+		return fmt.Errorf("failed creating project directory: %w", err)
+	}
+
 	cmd := exec.Command("go", "mod", "init", i.config.Module) //nolint: gosec
 	cmd.Dir = i.directory
 
