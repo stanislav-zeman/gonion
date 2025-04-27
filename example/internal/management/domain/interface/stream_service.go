@@ -1,3 +1,3 @@
 package interfaces
 
-type StreamService interface {}
+type StreamService interface{}
