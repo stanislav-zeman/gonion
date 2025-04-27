@@ -46,7 +46,8 @@ type StructFieldConfig struct {
 }
 
 type InfrastructureConfig struct {
-	Clients []ClientConfig `yaml:"clients,omitempty"`
+	Clients    []ClientConfig   `yaml:"clients,omitempty"`
+	Repository []dto.Repository `yaml:"repository,omitempty"`
 }
 
 type ClientConfig struct {

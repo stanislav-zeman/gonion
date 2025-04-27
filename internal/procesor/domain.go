@@ -1,6 +1,7 @@
 package processor
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"strings"
@@ -95,21 +96,37 @@ func (p *Processor) processDomainServices(serviceName string, logger dto.Logger,
 func (p *Processor) processDomainRepositories(
 	serviceName string,
 	repositories []dto.Repository,
+	entities []dto.Entity,
 ) error {
-	for _, domainRepository := range repositories {
-		domainRepository.Import = dto.Import{
+	for _, repository := range repositories {
+		repository.Import = dto.Import{
 			Module:  p.config.Module,
 			Service: serviceName,
 		}
 
-		log.Printf("Generating domain repository: %v\n", domainRepository)
+		var foundEntity bool
+		for _, entity := range entities {
+			if entity.Name == repository.Name {
+				repository.Entity = entity
+				foundEntity = true
+				break
+			}
+		}
 
-		data, err := p.templator.TemplateDomainRepository(domainRepository)
+		fmt.Println(entities, repository.Name)
+
+		if !foundEntity {
+			return errors.New("no matching entity found for repository")
+		}
+
+		log.Printf("Generating domain repository: %v\n", repository)
+
+		data, err := p.templator.TemplateDomainRepository(repository)
 		if err != nil {
 			return fmt.Errorf("failed templating domain repository: %w", err)
 		}
 
-		err = p.writer.WriteDomainRepository(serviceName, domainRepository.Name, data)
+		err = p.writer.WriteDomainRepository(serviceName, repository.Name, data)
 		if err != nil {
 			return fmt.Errorf("failed writing domain repository: %w", err)
 		}

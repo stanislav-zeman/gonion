@@ -1,6 +1,14 @@
 package repository
 
-type {{ .Name }}Repository interface {
+import (
+    "{{ .Import.Module }}/internal/{{ .Import.Service }}/domain/entity"
+)
 
+type {{ .Name }}Repository interface {
+    GetAll{{ .Entity.Name }}s() ([]entity.{{ .Entity.Name }}, error)
+    Get{{ .Entity.Name }}(id string) (entity.{{ .Entity.Name }}, error)
+    Create{{ .Entity.Name }}(entity.{{ .Entity.Name }}) (entity.{{ .Entity.Name }}, error)
+    Update{{ .Entity.Name }}(entity.{{ .Entity.Name }}) (entity.{{ .Entity.Name }}, error)
+    Delete{{ .Entity.Name }}(id string) (entity.{{ .Entity.Name }}, error)
 }
 

@@ -22,6 +22,9 @@ type Templator struct {
 	query        *template.Template
 	appInterface *template.Template
 	appService   *template.Template
+
+	// Application templates.
+	infraRepository *template.Template
 }
 
 func New(assetsDirector string) (t Templator, err error) {
@@ -79,6 +82,12 @@ func New(assetsDirector string) (t Templator, err error) {
 		return
 	}
 
+	fp = filepath.Join(assetsDirector, layers.InfrastructureLayer, "repository.tmpl")
+	infraRepository, err := template.ParseFiles(fp)
+	if err != nil {
+		return
+	}
+
 	t = Templator{
 		entity:           entity,
 		value:            value,
@@ -90,6 +99,8 @@ func New(assetsDirector string) (t Templator, err error) {
 		query:        query,
 		appInterface: appInterface,
 		appService:   appService,
+
+		infraRepository: infraRepository,
 	}
 
 	return
@@ -136,6 +147,10 @@ func (t *Templator) TemplateApplicationService(s dto.Service) (data []byte, err 
 }
 
 // ----------------------------------------------------------------------------
+
+func (t *Templator) TemplateInfrastructureRepository(r dto.Repository) (data []byte, err error) {
+	return templateObject(t.infraRepository, r)
+}
 
 func templateObject(t *template.Template, object any) (data []byte, err error) {
 	b := bytes.NewBuffer(make([]byte, 0))

@@ -1,0 +1,46 @@
+package {{ .Type }}
+
+import (
+{{ if .Logger}}    "{{ .Logger.Package }}" {{- end }}
+    "{{ .Import.Module }}/internal/{{ .Import.Service }}/domain/repository"
+    "{{ .Import.Module }}/internal/{{ .Import.Service }}/domain/entity"
+)
+
+var _ repository.{{ .Name }}Repository = &{{ .Name }}Repository{}
+
+type {{ .Name }}Repository struct{
+{{ if .Logger }}    log {{ .Logger.Struct }} {{- end }}
+}
+
+func New{{ .Name }}Repository(
+{{ if .Logger }}    log {{ .Logger.Struct }}, {{- end }}
+) *{{ .Name }}Repository {
+    return &{{ .Name }}Repository{
+        {{ if .Logger }} log: log, {{- end }}
+    }
+}
+
+func (r *{{ .Name }}Repository) GetAll{{ .Entity.Name }}s() ([]entity.{{ .Entity.Name }}, error) {
+    panic("unimplemented")
+}
+
+func (r *{{ .Name }}Repository) Get{{ .Entity.Name }}(id string) (entity.{{ .Entity.Name }}, error) {
+    _ = id
+    panic("unimplemented")
+}
+
+func (r *{{ .Name }}Repository) Create{{ .Entity.Name }}(e entity.{{ .Entity.Name }}) (entity.{{ .Entity.Name }}, error) {
+    _ = e
+    panic("unimplemented")
+}
+
+func (r *{{ .Name }}Repository) Update{{ .Entity.Name }}(e entity.{{ .Entity.Name }}) (entity.{{ .Entity.Name }}, error) {
+    _ = e
+    panic("unimplemented")
+}
+
+func (r *{{ .Name }}Repository) Delete{{ .Entity.Name }}(id string) (entity.{{ .Entity.Name }}, error){
+    _ = id
+    panic("unimplemented")
+}
+

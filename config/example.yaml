@@ -53,14 +53,21 @@ services:
                       type: string
                     - name: State
                       type: value.State
+                - name: Configuration
+                  fields:
+                    - name: ID
+                      type: string
             value:
                 - name: State
+            repository:
+                - name: Stream
+                - name: Configuration
+        infrastructure:
             repository:
                 - name: Stream
                   type: Redis
                 - name: Configuration
                   type: Postgres
-        infrastructure:
             client:
                 - name: AdsAPI
     content:

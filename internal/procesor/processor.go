@@ -48,7 +48,7 @@ func (p *Processor) Run() error {
 			return fmt.Errorf("failed processing domain services: %w", err)
 		}
 
-		err = p.processDomainRepositories(serviceName, service.Domain.Repository)
+		err = p.processDomainRepositories(serviceName, service.Domain.Repository, service.Domain.Entity)
 		if err != nil {
 			return fmt.Errorf("failed processing domain repositories: %w", err)
 		}
@@ -58,6 +58,18 @@ func (p *Processor) Run() error {
 		err = p.processApplicationServices(serviceName, logger, service.Application.Service)
 		if err != nil {
 			return fmt.Errorf("failed processing application services: %w", err)
+		}
+
+		// --------------------------------------------------------------------------
+
+		err = p.processInfrastructureRepositories(
+			serviceName,
+			logger,
+			service.Infrastructure.Repository,
+			service.Domain.Entity,
+		)
+		if err != nil {
+			return fmt.Errorf("failed processing infrastructure repositories: %w", err)
 		}
 	}
 

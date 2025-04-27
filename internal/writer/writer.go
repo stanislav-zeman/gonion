@@ -69,6 +69,10 @@ func (w *Writer) WriteApplicationService(service, name string, data []byte) erro
 
 // ----------------------------------------------------------------------------
 
+func (w *Writer) WriteInfrastructureRepository(service, name, typ string, data []byte) error {
+	return w.writeFile(service, layers.InfrastructureLayer, filepath.Join("persistence", typ), name+"_repository", data)
+}
+
 func (w *Writer) writeFile(service, layer, directory, name string, data []byte) error {
 	fp := filepath.Join(
 		w.directory,
