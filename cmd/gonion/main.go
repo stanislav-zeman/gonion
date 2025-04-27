@@ -15,8 +15,9 @@ import (
 )
 
 var (
-	configPath      = flag.String("config", "gonion.yaml", "project structure configuration")
-	outputDirectory = flag.String("out", ".", "project structure output directory")
+	configPath         = flag.String("config", "gonion.yaml", "project structure configuration")
+	outputDirectory    = flag.String("out", ".", "project structure output directory")
+	templatesDirectory = flag.String("templates", "assets", "directory with templates")
 )
 
 func main() {
@@ -49,7 +50,7 @@ func runGonion() error {
 		return fmt.Errorf("failed running initor: %w", err)
 	}
 
-	t, err := templator.New("assets")
+	t, err := templator.New(*templatesDirectory)
 	if err != nil {
 		return fmt.Errorf("failed creating templator: %w", err)
 	}
