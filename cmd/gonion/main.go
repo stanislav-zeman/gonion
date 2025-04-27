@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/stanislav-zeman/gonion/internal/config"
+	"github.com/stanislav-zeman/gonion/internal/initor"
 	processor "github.com/stanislav-zeman/gonion/internal/procesor"
 	"github.com/stanislav-zeman/gonion/internal/templator"
 	"github.com/stanislav-zeman/gonion/internal/writer"
@@ -39,6 +40,13 @@ func runGonion() error {
 	err = yaml.Unmarshal(f, &conf)
 	if err != nil {
 		return fmt.Errorf("failed unmarshalling config file: %w", err)
+	}
+
+	i := initor.New(conf, *outputDirectory)
+
+	err = i.Run()
+	if err != nil {
+		return fmt.Errorf("failed running initor: %w", err)
 	}
 
 	t, err := templator.New("assets")

@@ -6,6 +6,7 @@ type Config struct {
 	Version  int                      `yaml:"version,omitempty"`
 	Module   string                   `yaml:"module,omitempty"`
 	Services map[string]ServiceConfig `yaml:"services,omitempty"`
+	Misc     MiscConfig               `yaml:"misc,omitempty"`
 }
 
 type ServiceConfig struct {
@@ -15,7 +16,6 @@ type ServiceConfig struct {
 	Application    ApplicationConfig    `yaml:"application,omitempty"`
 	Domain         DomainConfig         `yaml:"domain,omitempty"`
 	Infrastructure InfrastructureConfig `yaml:"infrastructure,omitempty"`
-	Misc           MiscConfig           `yaml:"misc,omitempty"`
 }
 
 type ApplicationConfig struct {
