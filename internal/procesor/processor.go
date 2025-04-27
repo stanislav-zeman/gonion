@@ -10,6 +10,8 @@ import (
 	"github.com/stanislav-zeman/gonion/internal/writer"
 )
 
+// Processor creates project structure using the supplied configuration
+// and processes all of the structure to Go code.
 type Processor struct {
 	config    config.Config
 	templator templator.Templator

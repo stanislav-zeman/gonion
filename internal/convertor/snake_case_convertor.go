@@ -10,6 +10,7 @@ var (
 	matchAllCap   = regexp.MustCompile("([a-z0-9])([A-Z])")
 )
 
+// ToSnakeCase converts camel and pascal case to snake case.
 func ToSnakeCase(text string) string {
 	snake := matchFirstCap.ReplaceAllString(text, "${1}${2}")
 	snake = matchAllCap.ReplaceAllString(snake, "${1}_${2}")

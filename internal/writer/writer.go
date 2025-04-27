@@ -12,6 +12,7 @@ import (
 
 const defaultFilePermissions = 0o755
 
+// Writer writes data to various directories.
 type Writer struct {
 	directory string
 }

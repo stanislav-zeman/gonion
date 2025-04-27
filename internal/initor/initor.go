@@ -15,6 +15,8 @@ import (
 
 const defaultFilePermissions = 0o755
 
+// Initor inits projects metadata and configuration such as
+// the Go module itself, gitignore, golangci configuration etc.
 type Initor struct {
 	config    config.Config
 	directory string

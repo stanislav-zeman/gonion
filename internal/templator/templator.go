@@ -9,6 +9,8 @@ import (
 	"github.com/stanislav-zeman/gonion/internal/layers"
 )
 
+// Templator holds all of the object templates and exposes
+// an API to template them.
 type Templator struct {
 	// Domain templates.
 	entity           *template.Template
