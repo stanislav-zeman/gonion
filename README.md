@@ -13,9 +13,10 @@ GolangCI linter configuration, gitignore etc.
 
 ## Usage
 
-`sh
+```sh
 gonion --templates ./gonion/assets --config ./gonion/config/example.yaml --out my-project
-`
+```
+
 The project provides example configuration and showcases the generated
 code in the `example` directory.
 
