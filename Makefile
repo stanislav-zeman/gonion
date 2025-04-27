@@ -1,6 +1,3 @@
-gen: build
-	go generate ./...
-
 build:
 	go build -o bin ./...
 
@@ -9,3 +6,6 @@ lint:
 
 test:
 	go test -race -timeout 1h -coverprofile cp.out ./...
+
+generate: build
+	go generate ./...
