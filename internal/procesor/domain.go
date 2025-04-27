@@ -91,3 +91,29 @@ func (p *Processor) processDomainServices(serviceName string, logger dto.Logger,
 
 	return nil
 }
+
+func (p *Processor) processDomainRepositories(
+	serviceName string,
+	repositories []dto.Repository,
+) error {
+	for _, domainRepository := range repositories {
+		domainRepository.Import = dto.Import{
+			Module:  p.config.Module,
+			Service: serviceName,
+		}
+
+		log.Printf("Generating domain repository: %v\n", domainRepository)
+
+		data, err := p.templator.TemplateDomainRepository(domainRepository)
+		if err != nil {
+			return fmt.Errorf("failed templating domain repository: %w", err)
+		}
+
+		err = p.writer.WriteDomainRepository(serviceName, domainRepository.Name, data)
+		if err != nil {
+			return fmt.Errorf("failed writing domain repository: %w", err)
+		}
+	}
+
+	return nil
+}

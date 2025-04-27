@@ -41,6 +41,11 @@ func (w *Writer) WriteDomainService(service, name string, data []byte) error {
 	return w.writeFile(service, layers.DomainLayer, directory, name+"_"+directory, data)
 }
 
+func (w *Writer) WriteDomainRepository(service, name string, data []byte) error {
+	directory := "repository"
+	return w.writeFile(service, layers.DomainLayer, directory, name+"_"+directory, data)
+}
+
 // ----------------------------------------------------------------------------
 
 func (w *Writer) WriteApplicationCommand(service, name string, data []byte) error {

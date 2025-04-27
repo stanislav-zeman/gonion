@@ -29,10 +29,10 @@ type ApplicationServiceConfig struct {
 }
 
 type DomainConfig struct {
-	Entity     []dto.Entity       `yaml:"entity,omitempty"`
-	Value      []dto.Value        `yaml:"value,omitempty"`
-	Repository []RepositoryConfig `yaml:"repository,omitempty"`
-	Service    []dto.Service      `yaml:"service,omitempty"`
+	Entity     []dto.Entity     `yaml:"entity,omitempty"`
+	Value      []dto.Value      `yaml:"value,omitempty"`
+	Repository []dto.Repository `yaml:"repository,omitempty"`
+	Service    []dto.Service    `yaml:"service,omitempty"`
 }
 
 type StructConfig struct {
@@ -41,11 +41,6 @@ type StructConfig struct {
 }
 
 type StructFieldConfig struct {
-	Name string `yaml:"name,omitempty"`
-	Type string `yaml:"type,omitempty"`
-}
-
-type RepositoryConfig struct {
 	Name string `yaml:"name,omitempty"`
 	Type string `yaml:"type,omitempty"`
 }

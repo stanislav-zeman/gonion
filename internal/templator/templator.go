@@ -11,10 +11,11 @@ import (
 
 type Templator struct {
 	// Domain templates.
-	entity          *template.Template
-	value           *template.Template
-	domainInterface *template.Template
-	domainService   *template.Template
+	entity           *template.Template
+	value            *template.Template
+	domainInterface  *template.Template
+	domainService    *template.Template
+	domainRepository *template.Template
 
 	// Application templates.
 	command      *template.Template
@@ -48,6 +49,12 @@ func New(assetsDirector string) (t Templator, err error) {
 		return
 	}
 
+	fp = filepath.Join(assetsDirector, layers.DomainLayer, "repository.tmpl")
+	domainRepository, err := template.ParseFiles(fp)
+	if err != nil {
+		return
+	}
+
 	fp = filepath.Join(assetsDirector, layers.ApplicationLayer, "command.tmpl")
 	command, err := template.ParseFiles(fp)
 	if err != nil {
@@ -73,10 +80,11 @@ func New(assetsDirector string) (t Templator, err error) {
 	}
 
 	t = Templator{
-		entity:          entity,
-		value:           value,
-		domainInterface: domainInterface,
-		domainService:   domainService,
+		entity:           entity,
+		value:            value,
+		domainInterface:  domainInterface,
+		domainService:    domainService,
+		domainRepository: domainRepository,
 
 		command:      command,
 		query:        query,
@@ -101,8 +109,12 @@ func (t *Templator) TemplateDomainInterface(s dto.Service) (data []byte, err err
 	return templateObject(t.domainInterface, s)
 }
 
-func (t *Templator) TemplateDomainService(e dto.Service) (data []byte, err error) {
-	return templateObject(t.domainService, e)
+func (t *Templator) TemplateDomainService(s dto.Service) (data []byte, err error) {
+	return templateObject(t.domainService, s)
+}
+
+func (t *Templator) TemplateDomainRepository(r dto.Repository) (data []byte, err error) {
+	return templateObject(t.domainRepository, r)
 }
 
 // ----------------------------------------------------------------------------
