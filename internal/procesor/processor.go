@@ -59,10 +59,22 @@ func (p *Processor) Run() error {
 
 func (p *Processor) parseLogger(loggerName string) (logger dto.Logger, err error) {
 	switch loggerName {
+	case "slog":
+		logger = dto.Logger{
+			Struct:  "*slog.Logger",
+			Package: "slog",
+		}
+		return
 	case "zap":
 		logger = dto.Logger{
 			Struct:  "*zap.Logger",
 			Package: "go.uber.org/zap",
+		}
+		return
+	case "zerolog":
+		logger = dto.Logger{
+			Struct:  "*zerolog.Logger",
+			Package: "github.com/rs/zerolog",
 		}
 		return
 	default:
