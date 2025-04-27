@@ -10,6 +10,11 @@ import (
 	"github.com/stanislav-zeman/gonion/internal/writer"
 )
 
+var (
+	errUnknownLogger              = errors.New("unknown logger")
+	errNoMatchingRepositoryEntity = errors.New("no matching entity defined for repository")
+)
+
 // Processor creates project structure using the supplied configuration
 // and processes all of the structure to Go code.
 type Processor struct {
@@ -99,7 +104,7 @@ func (p *Processor) parseLogger(loggerName string) (logger dto.Logger, err error
 		}
 		return
 	default:
-		err = errors.New("unknown logger")
+		err = errUnknownLogger
 		return
 	}
 }

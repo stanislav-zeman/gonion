@@ -1,7 +1,6 @@
 package processor
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"strings"
@@ -113,10 +112,8 @@ func (p *Processor) processDomainRepositories(
 			}
 		}
 
-		fmt.Println(entities, repository.Name)
-
 		if !foundEntity {
-			return errors.New("no matching entity found for repository")
+			return errNoMatchingRepositoryEntity
 		}
 
 		log.Printf("Generating domain repository: %v\n", repository)

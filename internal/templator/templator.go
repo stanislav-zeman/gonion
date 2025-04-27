@@ -29,7 +29,7 @@ type Templator struct {
 	infraRepository *template.Template
 }
 
-func New(assetsDirector string) (t Templator, err error) {
+func New(assetsDirector string) (t Templator, err error) { //nolint: cyclop
 	fp := filepath.Join(assetsDirector, layers.DomainLayer, "entity.tmpl")
 	entity, err := template.ParseFiles(fp)
 	if err != nil {

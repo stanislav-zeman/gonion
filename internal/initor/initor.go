@@ -1,6 +1,7 @@
 package initor
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -13,7 +14,12 @@ import (
 	"github.com/stanislav-zeman/gonion/internal/config"
 )
 
-const defaultFilePermissions = 0o755
+const (
+	defaultFilePermissions = 0o755
+	defaultClientTimeout   = 5 * time.Second
+)
+
+var errUnexpectedStatusCode = errors.New("unexpected status code when getting data")
 
 // Initor inits projects metadata and configuration such as
 // the Go module itself, gitignore, golangci configuration etc.
@@ -25,7 +31,7 @@ type Initor struct {
 
 func New(config config.Config, directory string) Initor {
 	client := http.Client{
-		Timeout: 5 * time.Second,
+		Timeout: defaultClientTimeout,
 	}
 
 	return Initor{
@@ -36,27 +42,29 @@ func New(config config.Config, directory string) Initor {
 }
 
 func (i *Initor) Run() error {
+	ctx := context.Background()
+
 	err := i.initGoModule()
 	if err != nil {
 		return err
 	}
 
 	if i.config.Misc.Gitignore != "" {
-		err := i.initGitignore()
+		err := i.initGitignore(ctx)
 		if err != nil {
 			return fmt.Errorf("failed initializing gitignore: %w", err)
 		}
 	}
 
 	if i.config.Misc.Makefile != "" {
-		err := i.initMakefile()
+		err := i.initMakefile(ctx)
 		if err != nil {
 			return fmt.Errorf("failed initializing makefile: %w", err)
 		}
 	}
 
 	if i.config.Misc.GolangCI != "" {
-		err := i.initGolangCI()
+		err := i.initGolangCI(ctx)
 		if err != nil {
 			return fmt.Errorf("failed initializing golangci: %w", err)
 		}
@@ -79,7 +87,7 @@ func (i *Initor) initGoModule() error {
 		return fmt.Errorf("failed to stat go module: %w", err)
 	}
 
-	cmd := exec.Command("go", "mod", "init", i.config.Module)
+	cmd := exec.Command("go", "mod", "init", i.config.Module) //nolint: gosec
 	cmd.Dir = i.directory
 
 	out, err := cmd.CombinedOutput()
@@ -90,10 +98,10 @@ func (i *Initor) initGoModule() error {
 	return nil
 }
 
-func (i *Initor) initGitignore() error {
+func (i *Initor) initGitignore(ctx context.Context) error {
 	path := filepath.Join(i.directory, ".gitingore")
 
-	err := i.httpWriteFile(i.config.Misc.Gitignore, path)
+	err := i.httpWriteFile(ctx, i.config.Misc.Gitignore, path)
 	if err != nil {
 		return fmt.Errorf("failed to http write file: %w", err)
 	}
@@ -101,10 +109,10 @@ func (i *Initor) initGitignore() error {
 	return nil
 }
 
-func (i *Initor) initGolangCI() error {
+func (i *Initor) initGolangCI(ctx context.Context) error {
 	path := filepath.Join(i.directory, ".golangci.yaml")
 
-	err := i.httpWriteFile(i.config.Misc.GolangCI, path)
+	err := i.httpWriteFile(ctx, i.config.Misc.GolangCI, path)
 	if err != nil {
 		return fmt.Errorf("failed to http write file: %w", err)
 	}
@@ -112,10 +120,10 @@ func (i *Initor) initGolangCI() error {
 	return nil
 }
 
-func (i *Initor) initMakefile() error {
+func (i *Initor) initMakefile(ctx context.Context) error {
 	path := filepath.Join(i.directory, "Makefile")
 
-	err := i.httpWriteFile(i.config.Misc.Makefile, path)
+	err := i.httpWriteFile(ctx, i.config.Misc.Makefile, path)
 	if err != nil {
 		return fmt.Errorf("failed to http write file: %w", err)
 	}
@@ -123,15 +131,24 @@ func (i *Initor) initMakefile() error {
 	return nil
 }
 
-func (i *Initor) httpWriteFile(url, path string) error {
-	resp, err := i.client.Get(url)
+func (i *Initor) httpWriteFile(ctx context.Context, url, path string) error {
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return fmt.Errorf("failed creating request: %w", err)
+	}
+
+	req = req.WithContext(ctx)
+
+	resp, err := i.client.Do(req)
 	if err != nil {
 		return fmt.Errorf("failed getting data: %w", err)
 	}
 
-	if resp.StatusCode != 200 {
-		return fmt.Errorf("unexpected status code when getting data: %d", resp.StatusCode)
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("%w: %d", errUnexpectedStatusCode, resp.StatusCode)
 	}
+
+	defer resp.Body.Close()
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
