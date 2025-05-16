@@ -104,7 +104,7 @@ func (i *Initor) initGoModule() error {
 }
 
 func (i *Initor) initGitignore(ctx context.Context) error {
-	path := filepath.Join(i.directory, ".gitingore")
+	path := filepath.Join(i.directory, ".gitignore")
 
 	err := i.httpWriteFile(ctx, i.config.Misc.Gitignore, path)
 	if err != nil {
