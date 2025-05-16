@@ -10,10 +10,7 @@ import (
 	"github.com/stanislav-zeman/gonion/internal/writer"
 )
 
-var (
-	errUnknownLogger              = errors.New("unknown logger")
-	errNoMatchingRepositoryEntity = errors.New("no matching entity defined for repository")
-)
+var errNoMatchingRepositoryEntity = errors.New("no matching entity defined for repository")
 
 // Processor creates project structure using the supplied configuration
 // and processes all of the structure to Go code.
@@ -33,7 +30,7 @@ func New(config config.Config, templator templator.Templator, writer writer.Writ
 
 func (p *Processor) Run() error {
 	for serviceName, service := range p.config.Services {
-		logger, err := p.parseLogger(service.Logger)
+		logger, err := dto.ParseLogger(service.Logger)
 		if err != nil {
 			return fmt.Errorf("failed parsing logger: %w", err)
 		}
@@ -81,30 +78,4 @@ func (p *Processor) Run() error {
 	}
 
 	return nil
-}
-
-func (p *Processor) parseLogger(loggerName string) (logger dto.Logger, err error) {
-	switch loggerName {
-	case "slog":
-		logger = dto.Logger{
-			Struct:  "*slog.Logger",
-			Package: "slog",
-		}
-		return
-	case "zap":
-		logger = dto.Logger{
-			Struct:  "*zap.Logger",
-			Package: "go.uber.org/zap",
-		}
-		return
-	case "zerolog":
-		logger = dto.Logger{
-			Struct:  "*zerolog.Logger",
-			Package: "github.com/rs/zerolog",
-		}
-		return
-	default:
-		err = errUnknownLogger
-		return
-	}
 }
