@@ -58,9 +58,14 @@ func runGonion() error {
 	w := writer.NewWriter(*outputDirectory)
 	p := processor.New(conf, t, w)
 
-	err = p.Run()
+	dependencies, err := p.Run()
 	if err != nil {
 		return fmt.Errorf("failed running processor: %w", err)
+	}
+
+	err = i.AddDependencies(dependencies)
+	if err != nil {
+		return fmt.Errorf("failed adding dependencies to go module via initor: %w", err)
 	}
 
 	return nil

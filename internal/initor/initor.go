@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/stanislav-zeman/gonion/internal/config"
@@ -68,6 +69,37 @@ func (i *Initor) Run() error {
 		if err != nil {
 			return fmt.Errorf("failed initializing golangci: %w", err)
 		}
+	}
+
+	return nil
+}
+
+func (i *Initor) AddDependencies(dependencies []string) error {
+	for _, dependency := range dependencies {
+		if dependency == "" {
+			continue
+		}
+
+		// No need to import standard library packages.
+		if !strings.Contains(dependency, ".") {
+			continue
+		}
+
+		cmd := exec.Command("go", "get", dependency) //nolint: gosec
+		cmd.Dir = i.directory
+
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			return fmt.Errorf("failed adding dependency to go module (%s): %w", out, err)
+		}
+	}
+
+	cmd := exec.Command("go", "mod", "tidy") //nolint: gosec
+	cmd.Dir = i.directory
+
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("failed to tidy go module (%s): %w", out, err)
 	}
 
 	return nil
